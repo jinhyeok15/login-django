@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 
-def index(request: HttpRequest):
+def index(request):
 
     context = {
         "is_login": False,

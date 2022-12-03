@@ -40,10 +40,11 @@ def login(request):
             if context['is_vaild']:
                 response = redirect('pages:index')
 
-                response.set_cookies('username', user_data['username'])
-                response.set_cookies('password', user_data['password'])
-                response.set_cookies('is_login', True)
+                response.set_cookie('username', user_data['username'])
+                response.set_cookie('password', user_data['password'])
+                response.set_cookie('is_login', True)
 
                 return response
             return render(request, 'users/login.html', context)
-            
+def login_detail(request, id):
+    return HttpResponse('유저 ' + id)
