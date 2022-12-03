@@ -1,37 +1,49 @@
-from django.shortcuts import render
-
 # Create your views here.
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 import json
-
-
 def login(request):
     user_data = {
         'username': 'python',
         'password': 'django'
     }
  
+    context = {
+        'method' : request.method,
+        'is_vaild': True
+    }
+
     if (request.method == 'GET'):
-        return render(request, 'users/login.html')
+        return render(request, 'users/login.html', context)
+
     if(request.method == 'POST'):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        #username과 password 중 하나의 입력이 누락되었을 떄
-        # elif username is None or password is None:
-        #     return HttpResponse('불가능한 접근입니다.')
-        #blank상태일 때는 유저가 input을 입력하지 않고 제출했을 때(유저의 실수)
-        if username == '':
-            return HttpResponse('유저 아이디를 입력해주세요')
-        if password == '':
-            return HttpResponse('유저 비밀번호를 입력해주세요')
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            
+            #username과 password 중 하나의 입력이 누락되었을 떄
+            # elif username is None or password is None:
+            #     return HttpResponse('불가능한 접근입니다.')
 
-        if (username !=user_data['username']):
-            return HttpResponse('유저 아이디가 올바르지 않습니다.')
-        if (password != user_data['password']):
-            return HttpResponse('유저 비밀번호가 올바르지 않습니다.')
 
-        return HttpResponse('로그인 성공!')
-        
+            #blank상태일 때는 유저가 input을 입력하지 않고 제출했을 때(유저의 실수)
+            if username == '':
+                context['is_vaild'] = False
+            if password == '':
+                context['is_vaild'] = False
+
+            if (username !=user_data['username']):
+                context['is_vaild'] = False
+            if (password != user_data['password']):
+                context['is_vaild'] = False
+
+            if context['is_vaild']:
+                response = redirect('pages:index')
+
+                response.set_cookies('username', user_data['username'])
+                response.set_cookies('password', user_data['password'])
+                response.set_cookies('is_login', True)
+
+                return response
+            return render(request, 'users/login.html', context)
+            
